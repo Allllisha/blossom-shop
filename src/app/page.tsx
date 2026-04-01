@@ -18,8 +18,125 @@ const marqueeItems = [
   "Join our TikTok live",
 ];
 
+function SakuraPetals() {
+  const [petals, setPetals] = useState<Array<{
+    id: number;
+    left: string;
+    delay: string;
+    duration: string;
+    size: number;
+    swayAmount: number;
+    opacity: number;
+  }>>([]);
+
+  useEffect(() => {
+    const generated = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 8}s`,
+      duration: `${6 + Math.random() * 6}s`,
+      size: 10 + Math.random() * 14,
+      swayAmount: 30 + Math.random() * 60,
+      opacity: 0.4 + Math.random() * 0.4,
+    }));
+    setPetals(generated);
+  }, []);
+
+  return (
+    <div className="sakura-container">
+      {petals.map((p) => (
+        <div
+          key={p.id}
+          className="sakura-petal"
+          style={{
+            left: p.left,
+            animationDelay: p.delay,
+            animationDuration: p.duration,
+            opacity: p.opacity,
+            // @ts-expect-error CSS custom properties
+            '--sway': `${p.swayAmount}px`,
+            '--size': `${p.size}px`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Butterflies() {
+  const [butterflies, setButterflies] = useState<Array<{
+    id: number;
+    top: string;
+    delay: string;
+    duration: string;
+    size: number;
+    color1: string;
+    color2: string;
+  }>>([]);
+
+  useEffect(() => {
+    const colors = [
+      { c1: "#FFB3BA", c2: "#FFDFBA" }, // pastel pink → peach
+      { c1: "#BAFFC9", c2: "#BAE1FF" }, // pastel green → blue
+      { c1: "#E8B4F8", c2: "#FFB3BA" }, // pastel purple → pink
+      { c1: "#FFFFBA", c2: "#BAFFC9" }, // pastel yellow → green
+      { c1: "#BAE1FF", c2: "#E8B4F8" }, // pastel blue → purple
+      { c1: "#FFDFBA", c2: "#FFFFBA" }, // pastel peach → yellow
+    ];
+    const generated = Array.from({ length: 6 }, (_, i) => {
+      const c = colors[i % colors.length];
+      return {
+        id: i,
+        top: `${20 + Math.random() * 50}%`,
+        delay: `${3 + i * 5}s`,
+        duration: `${8 + Math.random() * 4}s`,
+        size: 16 + Math.random() * 10,
+        color1: c.c1,
+        color2: c.c2,
+      };
+    });
+    setButterflies(generated);
+  }, []);
+
+  return (
+    <div className="butterfly-container">
+      {butterflies.map((b) => (
+        <svg
+          key={b.id}
+          className="butterfly"
+          style={{
+            animationDelay: b.delay,
+            animationDuration: b.duration,
+          }}
+          width={b.size * 2.5}
+          height={b.size * 2}
+          viewBox="0 0 50 40"
+          fill="none"
+        >
+          {/* Left wings */}
+          <g className="butterfly-wing-left">
+            <path d="M25 20 C20 8, 5 2, 2 12 C0 18, 8 22, 25 20Z" fill={b.color1} opacity="0.7" />
+            <path d="M25 20 C20 24, 8 30, 5 26 C2 23, 12 20, 25 20Z" fill={b.color2} opacity="0.6" />
+          </g>
+          {/* Right wings */}
+          <g className="butterfly-wing-right">
+            <path d="M25 20 C30 8, 45 2, 48 12 C50 18, 42 22, 25 20Z" fill={b.color1} opacity="0.7" />
+            <path d="M25 20 C30 24, 42 30, 45 26 C48 23, 38 20, 25 20Z" fill={b.color2} opacity="0.6" />
+          </g>
+          {/* Body */}
+          <ellipse cx="25" cy="20" rx="1" ry="6" fill="var(--text-soft)" opacity="0.5" />
+          {/* Antennae */}
+          <path d="M25 14 C23 10, 20 8, 19 6" stroke="var(--text-soft)" strokeWidth="0.5" fill="none" opacity="0.4" />
+          <path d="M25 14 C27 10, 30 8, 31 6" stroke="var(--text-soft)" strokeWidth="0.5" fill="none" opacity="0.4" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -27,28 +144,67 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   return (
-    <nav className={`site-nav ${scrolled ? "scrolled" : ""}`}>
-      <div className="nav-inner">
-        <Link href="/" className="nav-logo">
-          Blossom<span>.</span>inc
-        </Link>
-        <ul className="nav-links">
+    <>
+      <nav className={`site-nav ${scrolled ? "scrolled" : ""} ${menuOpen ? "menu-open" : ""}`}>
+        <div className="nav-inner">
+          <Link href="/" className="nav-logo">
+            Blossom<span>.</span>inc
+          </Link>
+          <ul className="nav-links nav-desktop">
+            <li>
+              <a href="#collection">Collection</a>
+            </li>
+            <li>
+              <a
+                href="https://www.tiktok.com/@sakura.squishy6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                TikTok
+              </a>
+            </li>
+          </ul>
+          <button
+            className={`hamburger ${menuOpen ? "open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <ul className="mobile-menu-links">
           <li>
-            <a href="#collection">Collection</a>
+            <a href="#collection" onClick={() => setMenuOpen(false)}>Collection</a>
           </li>
           <li>
             <a
               href="https://www.tiktok.com/@sakura.squishy6"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
             >
               TikTok
             </a>
           </li>
         </ul>
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -107,6 +263,7 @@ export default function Home() {
           style={{ backgroundImage: "url(/images/hero-bg.jpg)" }}
         />
         <div className="hero-gradient" />
+        <SakuraPetals />
         <div className="hero-content">
           <p className="hero-eyebrow">Handcrafted squishies</p>
           <h1 className="hero-title">

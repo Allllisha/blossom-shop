@@ -8,7 +8,7 @@ export const products = [
       "A magical rainbow cake topped with clouds, stars, and a crescent moon. Slow-rising and scented.",
     longDescription:
       "This enchanting rainbow cake squishy is topped with fluffy clouds, twinkling stars, and a glittering crescent moon. Made with premium slow-rising foam, it returns to its original shape beautifully. Lightly scented with a sweet vanilla fragrance that lasts. Perfect as a stress reliever, desk companion, or gift for someone special.",
-    image: "/images/product-1.jpg",
+    image: "/images/howto.jpg",
     orderType: "howto" as const,
   },
   {

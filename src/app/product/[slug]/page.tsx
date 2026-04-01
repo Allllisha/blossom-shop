@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, use } from "react";
+import { useEffect, useRef, use, useState } from "react";
 import { products, getProductBySlug } from "../../products";
 
 function PayPalButton({ slug, buttonId }: { slug: string; buttonId: string }) {
@@ -65,6 +65,72 @@ function BackArrow() {
   );
 }
 
+function ProductNav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
+  return (
+    <>
+      <nav className={`site-nav scrolled ${menuOpen ? "menu-open" : ""}`}>
+        <div className="nav-inner">
+          <Link href="/" className="nav-logo">
+            Blossom<span>.</span>inc
+          </Link>
+          <ul className="nav-links nav-desktop">
+            <li>
+              <Link href="/#collection">Collection</Link>
+            </li>
+            <li>
+              <a
+                href="https://www.tiktok.com/@sakura.squishy6"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                TikTok
+              </a>
+            </li>
+          </ul>
+          <button
+            className={`hamburger ${menuOpen ? "open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Menu"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
+      </nav>
+
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <ul className="mobile-menu-links">
+          <li>
+            <Link href="/#collection" onClick={() => setMenuOpen(false)}>Collection</Link>
+          </li>
+          <li>
+            <a
+              href="https://www.tiktok.com/@sakura.squishy6"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+            >
+              TikTok
+            </a>
+          </li>
+        </ul>
+      </div>
+    </>
+  );
+}
+
 export default function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const product = getProductBySlug(slug);
@@ -87,27 +153,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   return (
     <>
       {/* ── Nav ── */}
-      <nav className="site-nav scrolled">
-        <div className="nav-inner">
-          <Link href="/" className="nav-logo">
-            Blossom<span>.</span>inc
-          </Link>
-          <ul className="nav-links">
-            <li>
-              <Link href="/#collection">Collection</Link>
-            </li>
-            <li>
-              <a
-                href="https://www.tiktok.com/@sakura.squishy6"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                TikTok
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <ProductNav />
 
       {/* ── Product Detail ── */}
       <main className="pdp-main">
