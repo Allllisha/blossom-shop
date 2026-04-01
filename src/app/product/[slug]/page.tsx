@@ -125,8 +125,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 <Image
                   src={product.image}
                   alt={product.name}
-                  fill
-                  className="object-cover"
+                  width={600}
+                  height={800}
+                  className="pdp-img"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />
